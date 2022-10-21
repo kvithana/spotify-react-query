@@ -22,7 +22,6 @@ specifiers:
   prettier: ^2.7.1
   rollup: ^3.2.3
   rollup-plugin-dts: ^5.0.0
-  rollup-plugin-peer-deps-external: ^2.2.4
   spotify-web-api-node: ^5.0.2
   tslib: ^2.4.0
   typescript: ^4.8.4
@@ -30,7 +29,6 @@ specifiers:
 dependencies:
   '@tanstack/react-query': 4.12.0
   dataloader: 2.1.0
-  rollup-plugin-peer-deps-external: 2.2.4_rollup@3.2.3
   spotify-web-api-node: 5.0.2
 
 devDependencies:
@@ -1090,6 +1088,7 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /function-bind/1.1.1:
@@ -1773,20 +1772,13 @@ packages:
       '@babel/code-frame': 7.18.6
     dev: true
 
-  /rollup-plugin-peer-deps-external/2.2.4_rollup@3.2.3:
-    resolution: {integrity: sha512-AWdukIM1+k5JDdAqV/Cxd+nejvno2FVLVeZ74NKggm3Q5s9cbbcOgUPGdbxPi4BXu7xGaZ8HG12F+thImYu/0g==}
-    peerDependencies:
-      rollup: '*'
-    dependencies:
-      rollup: 3.2.3
-    dev: false
-
   /rollup/3.2.3:
     resolution: {integrity: sha512-qfadtkY5kl0F5e4dXVdj2D+GtOdifasXHFMiL1SMf9ADQDv5Eti6xReef9FKj+iQPR2pvtqWna57s/PjARY4fg==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
+    dev: true
 
   /run-parallel/1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
