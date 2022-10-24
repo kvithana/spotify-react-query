@@ -56,5 +56,8 @@
   },
   "np": {
     "contents": "dist"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
