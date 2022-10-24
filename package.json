@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/kvithana/spotify-react-query.git"
   },
-  "main": "dist/cjs/index.js",
+  "main": "./dist/cjs/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "rollup": "rollup --config rollup.config.ts --configPlugin typescript"
@@ -52,9 +52,6 @@
   },
   "peerDependencies": {
     "react": "^18.2.0"
-  },
-  "np": {
-    "contents": "dist"
   },
   "engines": {
     "node": ">=16.0.0"
