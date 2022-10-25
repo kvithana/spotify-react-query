@@ -1,5 +1,6 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query"
+import { useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query"
 import { useSpotifyClient } from "../client"
+import { addTracksToCache } from "../tracks/cache"
 
 /**
  * Get a playlist owned by a Spotify user.
@@ -42,11 +43,18 @@ export function usePlaylistTracks(
   > & { variables?: { fields?: string; limit?: number; offset?: number; market?: string } }
 ) {
   const client = useSpotifyClient()
+  const query = useQueryClient()
 
   const loader = (id: string) =>
     client.getPlaylistTracks(id, options?.variables).then((res) => {
       if (res.statusCode !== 200) {
         throw new Error(JSON.stringify(res.body))
+      }
+      if (res.body.items) {
+        addTracksToCache(
+          query,
+          res.body.items.filter((i) => !!i.track?.uri).map((i) => i.track!)
+        )
       }
       return res.body
     })

@@ -1,7 +1,6 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@kvithana/spotify-react-query': ^0.0.0
   '@rollup/plugin-commonjs': ^23.0.1
   '@rollup/plugin-json': ^5.0.0
   '@rollup/plugin-node-resolve': ^15.0.0
@@ -28,7 +27,6 @@ specifiers:
   typescript: ^4.8.4
 
 dependencies:
-  '@kvithana/spotify-react-query': 0.0.0
   '@tanstack/react-query': 4.12.0
   dataloader: 2.1.0
   spotify-web-api-node: 5.0.2
@@ -134,20 +132,6 @@ packages:
   /@humanwhocodes/object-schema/1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
-
-  /@kvithana/spotify-react-query/0.0.0:
-    resolution: {integrity: sha512-dDLAbZt9qt2ROteCtcJcyPiu5cWSMNRbXLga0bMnQeSU+lPbQmYkpjmN7Meimpzq7+utizqKQA1OSGO5hMt1Ww==, tarball: download/@kvithana/spotify-react-query/0.0.0/b9bb67b236119b4d72513237740efe27c118fa75}
-    peerDependencies:
-      react: ^18.2.0
-    dependencies:
-      '@tanstack/react-query': 4.12.0
-      dataloader: 2.1.0
-      spotify-web-api-node: 5.0.2
-    transitivePeerDependencies:
-      - react-dom
-      - react-native
-      - supports-color
-    dev: false
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
