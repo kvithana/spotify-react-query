@@ -4,7 +4,7 @@ Simple React Query hooks for the Spotify Web API. With the power of [React Query
 
 This package is used by musictaste.space.
 
-> 🚨 This package is currently not ready for production and the API has been been finalized.
+> 🚨 This package is currently not ready for production and the API has not been finalized.
 
 ## Install
 
