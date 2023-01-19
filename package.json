@@ -6,13 +6,12 @@
     "type": "git",
     "url": "git+https://github.com/kvithana/spotify-react-query.git"
   },
-  "main": "./dist/cjs/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "rollup": "rollup --config rollup.config.ts --configPlugin typescript"
   },
   "keywords": [],
-  "author": "",
+  "author": "Kalana Vithana <hello@kalana.io>",
   "publishConfig": {
     "access": "public"
   },
@@ -39,19 +38,21 @@
     "rollup": "^3.10.0",
     "rollup-plugin-dts": "^5.1.1",
     "tslib": "^2.4.1",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "spotify-web-api-node": "^5.0.2"
   },
+  "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "types": "dist/index.d.ts",
   "dependencies": {
-    "dataloader": "^2.1.0",
-    "spotify-web-api-node": "^5.0.2"
+    "dataloader": "^2.1.0"
   },
   "peerDependencies": {
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "spotify-web-api-node": "^5.0.2"
   },
   "engines": {
     "node": ">=16.0.0"

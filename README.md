@@ -22,14 +22,16 @@ In order to use the hooks, you must wrap dependent components in a `SpotifyQuery
 
 ```typescript
 import { QueryClient } from "@tanstack/react-query"
+import SpotifyClient from "spotify-web-api-node"
 
-const client = new QueryClient()
+const query = new QueryClient()
+const spotify = new SpotifyClient()
 
 const App = () => {
   const accessToken = "" // retrieve an access token somehow
 
   return (
-    <SpotifyQueryProvider client={client} accessToken={accessToken}>
+    <SpotifyQueryProvider query={query} spotify={spotify} accessToken={accessToken}>
       <DependentComponents />
     </SpotifyQueryProvider>
   )

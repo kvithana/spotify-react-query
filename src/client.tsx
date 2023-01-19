@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import React, { useEffect, useMemo, useState } from "react"
-import SpotifyWebApi from "spotify-web-api-node"
+import React, { useEffect, useMemo } from "react"
+import type SpotifyWebApi from "spotify-web-api-node"
 import { AlbumLoader, createAlbumLoader } from "./albums/loader"
 import { ArtistLoader, createArtistLoader } from "./artists/loader"
 import { createTrackLoader, TrackLoader } from "./tracks/loader"
@@ -18,15 +18,15 @@ export const SpotifyQueryContext = React.createContext<SpotifyQueryContextType |
 
 export function SpotifyQueryProvider({
   accessToken,
-  client,
+  query,
+  spotify,
   children,
 }: {
   accessToken: string | null
-  client: QueryClient
+  query: QueryClient
+  spotify: SpotifyWebApi
   children: React.ReactNode
 }) {
-  const [spotify] = useState(new SpotifyWebApi())
-
   useEffect(() => {
     if (accessToken) {
       spotify.setAccessToken(accessToken)
@@ -38,7 +38,7 @@ export function SpotifyQueryProvider({
   const loaders = useMemo(() => {
     return {
       track: createTrackLoader(spotify),
-      album: createAlbumLoader(spotify, client),
+      album: createAlbumLoader(spotify, query),
       artist: createArtistLoader(spotify),
     }
   }, [])
@@ -52,7 +52,7 @@ export function SpotifyQueryProvider({
 
   return (
     <SpotifyQueryContext.Provider value={value}>
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      <QueryClientProvider client={query}>{children}</QueryClientProvider>
     </SpotifyQueryContext.Provider>
   )
 }
