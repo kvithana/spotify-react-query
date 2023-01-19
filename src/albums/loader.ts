@@ -3,12 +3,15 @@ import DataLoader from "dataloader"
 import SpotifyWebApi from "spotify-web-api-node"
 import { getError } from "../errors"
 import { addTracksToCache } from "../tracks/cache"
+import { until } from "../utils/until"
 
 export const fetchAlbums =
   (spotify: SpotifyWebApi, query: QueryClient) =>
   async (keys: readonly string[]): Promise<SpotifyApi.AlbumObjectFull[]> => {
     const remaining = [...keys]
     const albums: SpotifyApi.AlbumObjectFull[] = []
+
+    await until(() => !!spotify.getAccessToken())
 
     while (remaining.length > 0) {
       const batch = remaining.splice(0, 50)

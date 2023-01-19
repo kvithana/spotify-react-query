@@ -1,6 +1,7 @@
 import DataLoader from "dataloader"
 import SpotifyWebApi from "spotify-web-api-node"
 import { getError } from "../errors"
+import { until } from "../utils/until"
 
 export const fetchArtists =
   (spotify: SpotifyWebApi) =>
@@ -8,6 +9,8 @@ export const fetchArtists =
     const remaining = [...keys]
     const artists: SpotifyApi.ArtistObjectFull[] = []
 
+    await until(() => !!spotify.getAccessToken())
+  
     while (remaining.length > 0) {
       const batch = remaining.splice(0, 50)
       const response = await spotify.getArtists(batch)

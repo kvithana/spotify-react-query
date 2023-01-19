@@ -2,6 +2,7 @@ import { useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query
 import { useSpotifyClient } from "../client"
 import { getError } from "../errors"
 import { addTracksToCache } from "../tracks/cache"
+import { until } from "../utils/until"
 
 /**
  * Get a playlist owned by a Spotify user.
@@ -18,13 +19,15 @@ export function usePlaylist(
 ) {
   const client = useSpotifyClient()
 
-  const loader = (id: string) =>
-    client.getPlaylist(id).then((res) => {
+  const loader = async (id: string) => {
+    await until(() => !!client.getAccessToken())
+    return client.getPlaylist(id).then((res) => {
       if (res.statusCode !== 200) {
         throw getError(res.statusCode, res.body)
       }
       return res.body
     })
+  }
 
   return useQuery(["playlist", id], () => loader(id), options)
 }
@@ -46,8 +49,9 @@ export function usePlaylistTracks(
   const client = useSpotifyClient()
   const query = useQueryClient()
 
-  const loader = (id: string) =>
-    client.getPlaylistTracks(id, options?.variables).then((res) => {
+  const loader = async (id: string) => {
+    await until(() => !!client.getAccessToken())
+    return client.getPlaylistTracks(id, options?.variables).then((res) => {
       if (res.statusCode !== 200) {
         throw getError(res.statusCode, res.body)
       }
@@ -59,6 +63,7 @@ export function usePlaylistTracks(
       }
       return res.body
     })
+  }
 
   return useQuery(["playlist", id, options?.variables ?? {}], () => loader(id), options)
 }
