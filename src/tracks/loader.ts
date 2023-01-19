@@ -1,5 +1,6 @@
 import DataLoader from "dataloader"
 import SpotifyWebApi from "spotify-web-api-node"
+import { getError } from "../errors"
 
 export const fetchTracks =
   (client: SpotifyWebApi) =>
@@ -11,7 +12,7 @@ export const fetchTracks =
       const batch = remaining.splice(0, 50)
       const response = await client.getTracks(batch)
       if (response.statusCode !== 200) {
-        throw new Error(JSON.stringify(response.body))
+        throw getError(response.statusCode, response.body)
       }
       tracks.push(...response.body.tracks.map((track) => track ?? new Error("Track not found")))
     }

@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query"
 import { useSpotifyClient } from "../client"
+import { getError } from "../errors"
 import { addTracksToCache } from "../tracks/cache"
 
 /**
@@ -20,7 +21,7 @@ export function usePlaylist(
   const loader = (id: string) =>
     client.getPlaylist(id).then((res) => {
       if (res.statusCode !== 200) {
-        throw new Error(JSON.stringify(res.body))
+        throw getError(res.statusCode, res.body)
       }
       return res.body
     })
@@ -48,7 +49,7 @@ export function usePlaylistTracks(
   const loader = (id: string) =>
     client.getPlaylistTracks(id, options?.variables).then((res) => {
       if (res.statusCode !== 200) {
-        throw new Error(JSON.stringify(res.body))
+        throw getError(res.statusCode, res.body)
       }
       if (res.body.items) {
         addTracksToCache(

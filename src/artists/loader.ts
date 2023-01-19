@@ -1,5 +1,6 @@
 import DataLoader from "dataloader"
 import SpotifyWebApi from "spotify-web-api-node"
+import { getError } from "../errors"
 
 export const fetchArtists =
   (spotify: SpotifyWebApi) =>
@@ -11,7 +12,7 @@ export const fetchArtists =
       const batch = remaining.splice(0, 50)
       const response = await spotify.getArtists(batch)
       if (response.statusCode !== 200) {
-        throw new Error(JSON.stringify(response.body))
+        throw getError(response.statusCode, response.body)
       }
       artists.push(...response.body.artists.map((artist) => artist ?? new Error("Artist not found")))
     }

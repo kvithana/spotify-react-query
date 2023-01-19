@@ -1,6 +1,7 @@
 import { QueryClient } from "@tanstack/react-query"
 import DataLoader from "dataloader"
 import SpotifyWebApi from "spotify-web-api-node"
+import { getError } from "../errors"
 import { addTracksToCache } from "../tracks/cache"
 
 export const fetchAlbums =
@@ -13,7 +14,7 @@ export const fetchAlbums =
       const batch = remaining.splice(0, 50)
       const response = await spotify.getAlbums(batch)
       if (response.statusCode !== 200) {
-        throw new Error(JSON.stringify(response.body))
+        throw getError(response.statusCode, response.body)
       }
       for (const album of response.body.albums) {
         if (album) addTracksToCache(query, album.tracks.items)

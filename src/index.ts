@@ -1,5 +1,6 @@
 export * from "./albums"
 export * from "./artists"
 export * from "./client"
+export { BadRequestError, NotFoundError, TooManyRequestsError, UnauthorizedError } from "./errors"
 export * from "./playlists"
 export * from "./tracks"
