@@ -1,6 +1,6 @@
 {
   "name": "spotify-react-query",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "React Query hooks for the Spotify Web API",
   "repository": {
     "type": "git",
