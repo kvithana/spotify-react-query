@@ -4,11 +4,11 @@ specifiers:
   '@rollup/plugin-commonjs': ^23.0.7
   '@rollup/plugin-json': ^5.0.2
   '@rollup/plugin-node-resolve': ^15.0.1
-  '@rollup/plugin-replace': ^5.0.2
   '@rollup/plugin-typescript': ^9.0.2
   '@tanstack/react-query': ^4.22.0
   '@types/node': ^18.11.18
   '@types/react': ^18.0.27
+  '@types/rollup-plugin-peer-deps-external': ^2.2.1
   '@types/spotify-web-api-node': ^5.0.7
   dataloader: ^2.1.0
   eslint: ^8.32.0
@@ -22,6 +22,7 @@ specifiers:
   prettier: ^2.8.3
   rollup: ^3.10.0
   rollup-plugin-dts: ^5.1.1
+  rollup-plugin-peer-deps-external: ^2.2.4
   spotify-web-api-node: ^5.0.2
   tslib: ^2.4.1
   typescript: ^4.9.4
@@ -33,11 +34,11 @@ devDependencies:
   '@rollup/plugin-commonjs': 23.0.7_rollup@3.10.0
   '@rollup/plugin-json': 5.0.2_rollup@3.10.0
   '@rollup/plugin-node-resolve': 15.0.1_rollup@3.10.0
-  '@rollup/plugin-replace': 5.0.2_rollup@3.10.0
   '@rollup/plugin-typescript': 9.0.2_6xbyoujvh6bzbrau3o3neoxpya
   '@tanstack/react-query': 4.22.0
   '@types/node': 18.11.18
   '@types/react': 18.0.27
+  '@types/rollup-plugin-peer-deps-external': 2.2.1
   '@types/spotify-web-api-node': 5.0.7
   eslint: 8.32.0
   eslint-config-airbnb: 19.0.4_td5yecidacttadzxcsbd5t7tli
@@ -50,6 +51,7 @@ devDependencies:
   prettier: 2.8.3
   rollup: 3.10.0
   rollup-plugin-dts: 5.1.1_eymahajmafh3u7vrzmo7ylp2pa
+  rollup-plugin-peer-deps-external: 2.2.4_rollup@3.10.0
   spotify-web-api-node: 5.0.2
   tslib: 2.4.1
   typescript: 4.9.4
@@ -199,20 +201,6 @@ packages:
       rollup: 3.10.0
     dev: true
 
-  /@rollup/plugin-replace/5.0.2_rollup@3.10.0:
-    resolution: {integrity: sha512-M9YXNekv/C/iHHK+cvORzfRYfPbq0RDD8r0G+bMiTXjNGKulPnCT9O3Ss46WfhI6ZOCgApOP7xAdmCQJ+U2LAA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@rollup/pluginutils': 5.0.2_rollup@3.10.0
-      magic-string: 0.27.0
-      rollup: 3.10.0
-    dev: true
-
   /@rollup/plugin-typescript/9.0.2_6xbyoujvh6bzbrau3o3neoxpya:
     resolution: {integrity: sha512-/sS93vmHUMjzDUsl5scNQr1mUlNE1QjBBvOhmRwJCH8k2RRhDIm3c977B3wdu3t3Ap17W6dDeXP3hj1P1Un1bA==}
     engines: {node: '>=14.0.0'}
@@ -268,6 +256,10 @@ packages:
       use-sync-external-store: 1.2.0
     dev: true
 
+  /@types/estree/0.0.39:
+    resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}
+    dev: true
+
   /@types/estree/1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
     dev: true
@@ -294,6 +286,13 @@ packages:
 
   /@types/resolve/1.20.2:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
+    dev: true
+
+  /@types/rollup-plugin-peer-deps-external/2.2.1:
+    resolution: {integrity: sha512-CUK4Mi3M3A/0coRUeo4McvUFOxR5H6UYd6Wt3D+K4c4fJupolMSoIxsZaBG1g/BJQOaujf78Pf7KhgfhrX1FZA==}
+    dependencies:
+      '@types/node': 18.11.18
+      rollup: 0.63.5
     dev: true
 
   /@types/scheduler/0.16.2:
@@ -1836,6 +1835,22 @@ packages:
       typescript: 4.9.4
     optionalDependencies:
       '@babel/code-frame': 7.18.6
+    dev: true
+
+  /rollup-plugin-peer-deps-external/2.2.4_rollup@3.10.0:
+    resolution: {integrity: sha512-AWdukIM1+k5JDdAqV/Cxd+nejvno2FVLVeZ74NKggm3Q5s9cbbcOgUPGdbxPi4BXu7xGaZ8HG12F+thImYu/0g==}
+    peerDependencies:
+      rollup: '*'
+    dependencies:
+      rollup: 3.10.0
+    dev: true
+
+  /rollup/0.63.5:
+    resolution: {integrity: sha512-dFf8LpUNzIj3oE0vCvobX6rqOzHzLBoblyFp+3znPbjiSmSvOoK2kMKx+Fv9jYduG1rvcCfCveSgEaQHjWRF6g==}
+    hasBin: true
+    dependencies:
+      '@types/estree': 0.0.39
+      '@types/node': 18.11.18
     dev: true
 
   /rollup/3.10.0:

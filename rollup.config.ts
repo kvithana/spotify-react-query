@@ -1,9 +1,9 @@
 import commonjs from "@rollup/plugin-commonjs"
 import json from "@rollup/plugin-json"
 import resolve from "@rollup/plugin-node-resolve"
-import replace from "@rollup/plugin-replace"
 import typescript from "@rollup/plugin-typescript"
 import dts from "rollup-plugin-dts"
+import peerDepsExternal from "rollup-plugin-peer-deps-external"
 
 export default [
   {
@@ -20,16 +20,7 @@ export default [
         sourcemap: true,
       },
     ],
-    plugins: [
-      resolve({ browser: true }),
-      json(),
-      replace({
-        "global.GENTLY": false,
-        preventAssignment: true,
-      }),
-      commonjs(),
-      typescript({ tsconfig: "./tsconfig.json" }),
-    ],
+    plugins: [resolve(), peerDepsExternal(), json(), commonjs(), typescript({ tsconfig: "./tsconfig.json" })],
   },
   {
     input: "dist/esm/src/index.d.ts",

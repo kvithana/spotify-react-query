@@ -16,7 +16,9 @@ yarn add spotify-react-query
 
 ## Usage
 
-In order to use the hooks, you must wrap dependent components in a `SpotifyQueryProvider` and pass in a [React Query](https://tanstack.com/query/v4/docs/quick-start) `QueryClient`. The client can be customized to suit your use case, or you can pass in the default client and it will work out of the box.
+In order to use the hooks, you must wrap dependent components in a `SpotifyQueryProvider` and pass in a [React Query](https://tanstack.com/query/v4/docs/quick-start) `QueryClient`. The client can be customized to suit your use case, or you can pass in the default client and it will work out of the box. 
+
+You must also provide a Spotify Client instance from `spotify-web-api-node`. The library will not perform any requests until an access token is set on the client. You will need to manage the lifecycle of token refreshes outside of `<SpotifyQueryProvider>` context.
 
 ### SpotifyQueryProvider
 
@@ -26,12 +28,12 @@ import SpotifyClient from "spotify-web-api-node"
 
 const query = new QueryClient()
 const spotify = new SpotifyClient()
+// this is usually managed inside your application
+spotify.setAccessToken("<ACCESS_TOKEN>")
 
 const App = () => {
-  const accessToken = "" // retrieve an access token somehow
-
   return (
-    <SpotifyQueryProvider query={query} spotify={spotify} accessToken={accessToken}>
+    <SpotifyQueryProvider query={query} spotify={spotify}>
       <DependentComponents />
     </SpotifyQueryProvider>
   )
