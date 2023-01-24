@@ -1,5 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query"
 import { useLoaders } from "../client"
+import { config } from "../query-config"
 
 /**
  * Returns a query for a simplified track object from the Spotify API. This will
@@ -17,7 +18,7 @@ export function useSimplifiedTrack(
   >
 ) {
   const { track } = useLoaders()
-  return useQuery(["track", "simplified", id], () => track.load(id), options)
+  return useQuery(["track", "simplified", id], () => track.load(id), config(options))
 }
 
 /**
@@ -34,5 +35,5 @@ export function useFullTrack(
   >
 ) {
   const { track } = useLoaders()
-  return useQuery(["track", "full", id], () => track.load(id), options)
+  return useQuery(["track", "full", id], () => track.load(id), config(options))
 }

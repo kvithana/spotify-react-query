@@ -1,5 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query"
 import { useLoaders } from "../client"
+import { config } from "../query-config"
 
 /**
  * Returns a query for a simplified artist object from the Spotify API.
@@ -15,7 +16,7 @@ export function useSimplifiedArtist(
   >
 ) {
   const { artist } = useLoaders()
-  return useQuery(["artist", "simplified", id], () => artist.load(id), options)
+  return useQuery(["artist", "simplified", id], () => artist.load(id), config(options))
 }
 
 /**
@@ -32,5 +33,5 @@ export function useFullArtist(
   >
 ) {
   const { artist } = useLoaders()
-  return useQuery(["artist", "full", id], () => artist.load(id), options)
+  return useQuery(["artist", "full", id], () => artist.load(id), config(options))
 }

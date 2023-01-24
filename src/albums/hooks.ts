@@ -1,5 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query"
 import { useLoaders } from "../client"
+import { config } from "../query-config"
 
 /**
  * Returns a query for a simplified album object from the Spotify API. This will
@@ -17,7 +18,7 @@ export function useSimplifiedAlbum(
   >
 ) {
   const { album } = useLoaders()
-  return useQuery(["album", "simplified", id], () => album.load(id), options)
+  return useQuery(["album", "simplified", id], () => album.load(id), config(options))
 }
 
 /**
@@ -34,5 +35,5 @@ export function useFullAlbum(
   >
 ) {
   const { album } = useLoaders()
-  return useQuery(["album", "full", id], () => album.load(id), options)
+  return useQuery(["album", "full", id], () => album.load(id), config(options))
 }

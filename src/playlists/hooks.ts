@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query"
 import { useSpotifyClient } from "../client"
 import { getError } from "../errors"
+import { config } from "../query-config"
 import { addTracksToCache } from "../tracks/cache"
 import { until } from "../utils/until"
 
@@ -29,7 +30,7 @@ export function usePlaylist(
     })
   }
 
-  return useQuery(["playlist", id], () => loader(id), options)
+  return useQuery(["playlist", id], () => loader(id), config(options))
 }
 
 /**
@@ -65,5 +66,7 @@ export function usePlaylistTracks(
     })
   }
 
-  return useQuery(["playlist", id, options?.variables ?? {}], () => loader(id), options)
+  const variables = Object.keys(options?.variables ?? {}).join(":")
+
+  return useQuery(["playlist:tracks", id, variables], () => loader(id), config(options))
 }
