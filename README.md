@@ -16,7 +16,7 @@ yarn add spotify-react-query
 
 ## Usage
 
-In order to use the hooks, you must wrap dependent components in a `SpotifyQueryProvider` and pass in a [React Query](https://tanstack.com/query/v4/docs/quick-start) `QueryClient`. The client can be customized to suit your use case, or you can pass in the default client and it will work out of the box. 
+In order to use the hooks, you must wrap dependent components in a `SpotifyQueryProvider` and pass in a [React Query](https://tanstack.com/query/v4/docs/quick-start) `QueryClient`. The client can be customized to suit your use case, or you can pass in the default client and it will work out of the box.
 
 You must also provide a Spotify Client instance from `spotify-web-api-node`. The library will not perform any requests until an access token is set on the client. You will need to manage the lifecycle of token refreshes outside of `<SpotifyQueryProvider>` context.
 
@@ -77,41 +77,65 @@ For this reason, it's recommended that you use the simplified entities wherever 
 #### Tracks
 
 ```typescript
-useSimplifiedTrack(uri: string, options?: ReactQueryOptions)
+function useSimplifiedTrack(id: string, options?: ReactQueryOptions)
 ```
 
 ```typescript
-useFullTrack(uri: string, options?: ReactQueryOptions)
+function useFullTrack(id: string, options?: ReactQueryOptions)
 ```
 
 #### Albums
 
 ```typescript
-useSimplifiedAlbum(uri: string, options?: ReactQueryOptions)
+function useSimplifiedAlbum(id: string, options?: ReactQueryOptions)
 ```
 
 ```typescript
-useFullAlbum(uri: string, options?: ReactQueryOptions)
+function useFullAlbum(id: string, options?: ReactQueryOptions)
 ```
 
 #### Artists
 
 ```typescript
-useSimplifiedArtist(uri: string, options?: ReactQueryOptions)
+function useSimplifiedArtist(id: string, options?: ReactQueryOptions)
 ```
 
 ```typescript
-useFullArtist(uri: string, options?: ReactQueryOptions)
+function useFullArtist(id: string, options?: ReactQueryOptions)
 ```
 
 #### Playlists
 
 ```typescript
-usePlaylist(uri: string, options?: ReactQueryOptions)
+function usePlaylist(id: string, options?: ReactQueryOptions)
 ```
 
 ```typescript
-usePlaylistTracks(uri: string, options?: ReactQueryOptions & { variables?: { fields?: string; limit?: number; offset?: number; market?: string } })
+function usePlaylistTracks({
+  variables?: { id: string; fields?: string; limit?: number; offset?: number; market?: string } },
+  options?: ReactQueryOptions
+)
+```
+
+```typescript
+function useUserTopTracks(
+  variables: { limit?: number; offset?: number; time_range: "short_term" | "medium_term" | "long_term" },
+  options?: ReactQueryOptions
+)
+```
+
+```typescript
+function useUserTopArtists(
+  variables: { limit?: number; offset?: number; time_range: "short_term" | "medium_term" | "long_term" },
+  options?: ReactQueryOptions
+)
+```
+
+```typescript
+function useRecentlyPlayedTracks(
+  variables: { after?: number; before?: number; limit?: number },
+  options?: ReactQueryOptions
+)
 ```
 
 ### Spotify Client
