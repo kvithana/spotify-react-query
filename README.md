@@ -117,6 +117,8 @@ function usePlaylistTracks({
 )
 ```
 
+#### Statistics
+
 ```typescript
 function useUserTopTracks(
   variables: { limit?: number; offset?: number; time_range: "short_term" | "medium_term" | "long_term" },
