@@ -1,4 +1,10 @@
+[size-img]: https://img.shields.io/bundlephobia/minzip/spotify-react-query
+[latest-img]: https://img.shields.io/npm/v/spotify-react-query
+
 # Spotify React Query
+
+[![Latest][latest-img]](https://www.npmjs.com/package/spotify-react-query)
+[![Size][size-img]](https://bundlephobia.com/result?p=spotify-react-query)
 
 Simple React Query hooks for the Spotify Web API. With the power of [React Query](https://tanstack.com/query/v4/docs/quick-start), requests for Spotify resources are automatically cached, and by leveraging [dataloader](https://github.com/graphql/dataloader) under the hood, we can batch calls for similar resources to avoid using up your Spotify API quota.
 
