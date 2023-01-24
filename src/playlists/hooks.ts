@@ -9,7 +9,7 @@ import { until } from "../utils/until"
  * Get a playlist owned by a Spotify user.
  *
  * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/get-playlist
- * @param id Spotify playlist URI
+ * @param id Spotify playlist ID
  */
 export function usePlaylist(
   id: string,
@@ -38,35 +38,47 @@ export function usePlaylist(
  * Parameters can be passed into `options.variables`.
  *
  * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/get-playlists-tracks
- * @param id Spotify playlist URI
+ * @param id Spotify playlist ID
  */
 export function usePlaylistTracks(
-  id: string,
+  variables: { id: string; fields?: string; limit?: number; offset?: number; market?: string },
   options?: Omit<
     UseQueryOptions<any, any, SpotifyApi.PlaylistTrackObject[], any[]>,
     "queryKey" | "queryFn" | "initialData"
-  > & { variables?: { fields?: string; limit?: number; offset?: number; market?: string } }
+  >
 ) {
   const client = useSpotifyClient()
   const query = useQueryClient()
 
-  const loader = async (id: string) => {
+  const loader = async () => {
     await until(() => !!client.getAccessToken())
-    return client.getPlaylistTracks(id, options?.variables).then((res) => {
-      if (res.statusCode !== 200) {
-        throw getError(res.statusCode, res.body)
-      }
-      if (res.body.items) {
-        addTracksToCache(
-          query,
-          res.body.items.filter((i) => !!i.track?.uri).map((i) => i.track!)
-        )
-      }
-      return res.body
-    })
+    return client
+      .getPlaylistTracks(variables.id, {
+        fields: variables.fields,
+        limit: variables.limit,
+        offset: variables.offset,
+        market: variables.market,
+      })
+      .then((res) => {
+        if (res.statusCode !== 200) {
+          throw getError(res.statusCode, res.body)
+        }
+        if (res.body.items) {
+          addTracksToCache(
+            query,
+            res.body.items.filter((i) => !!i.track?.uri).map((i) => i.track!)
+          )
+        }
+        return res.body
+      })
   }
 
-  const variables = Object.keys(options?.variables ?? {}).join(":")
-
-  return useQuery(["playlist:tracks", id, variables], () => loader(id), config(options))
+  return useQuery(
+    [
+      "playlist:tracks",
+      [variables.id, variables.fields, variables.limit, variables.market, variables.offset].join(":"),
+    ],
+    loader,
+    config(options)
+  )
 }
