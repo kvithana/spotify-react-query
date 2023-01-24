@@ -1,6 +1,6 @@
 {
   "name": "spotify-react-query",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "React Query hooks for the Spotify Web API",
   "repository": {
     "type": "git",
@@ -8,8 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "build": "trash ./dist && rollup --config rollup.config.ts --configPlugin typescript",
-    "publish": "pnpm run build && pnpm np"
+    "build": "trash ./dist && rollup --config rollup.config.ts --configPlugin typescript"
   },
   "keywords": [],
   "author": "Kalana Vithana <hello@kalana.io>",
