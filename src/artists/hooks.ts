@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query"
+import { useQueries, useQuery, UseQueryOptions } from "@tanstack/react-query"
 import { useLoaders } from "../client"
 import { config } from "../query-config"
 
@@ -34,4 +34,27 @@ export function useFullArtist(
 ) {
   const { artist } = useLoaders()
   return useQuery(["artist", "full", id], () => artist.load(id), config(options))
+}
+
+/**
+ * Returns a query for multiple full artist objects from the Spotify API.
+ *
+ * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artist
+ * @param id Spotify artist URI
+ */
+export function useFullArtists(
+  ids: string[],
+  options?: Omit<
+    UseQueryOptions<any, any, SpotifyApi.ArtistObjectFull, string[]>,
+    "queryKey" | "queryFn" | "initialData"
+  >
+) {
+  const { artist } = useLoaders()
+  return useQueries({
+    queries: ids.map((id) => ({
+      queryKey: ["artist", "full", id],
+      queryFn: () => artist.load(id),
+      config: config(options),
+    })),
+  })
 }

@@ -8,9 +8,7 @@
 
 Simple React Query hooks for the Spotify Web API. With the power of [React Query](https://tanstack.com/query/v4/docs/quick-start), requests for Spotify resources are automatically cached, and by leveraging [dataloader](https://github.com/graphql/dataloader) under the hood, we can batch calls for similar resources to avoid using up your Spotify API quota.
 
-This package is used by musictaste.space.
-
-> 🚨 This package is currently not ready for production and the API has not been finalized.
+This package is used by the musictaste.space beta.
 
 ## Install
 
@@ -90,6 +88,10 @@ function useSimplifiedTrack(id: string, options?: ReactQueryOptions)
 function useFullTrack(id: string, options?: ReactQueryOptions)
 ```
 
+```typescript
+function useFullTracks(ids: string[], options?: ReactQueryOptions)
+```
+
 #### Albums
 
 ```typescript
@@ -108,6 +110,10 @@ function useSimplifiedArtist(id: string, options?: ReactQueryOptions)
 
 ```typescript
 function useFullArtist(id: string, options?: ReactQueryOptions)
+```
+
+```typescript
+function useFullArtists(ids: string[], options?: ReactQueryOptions)
 ```
 
 #### Playlists
