@@ -15,7 +15,7 @@ export const fetchTracks =
     while (remaining.length > 0) {
       const batch = remaining.splice(0, 50)
       let response = await client.getTracks(batch)
-      if (response.statusCode === 429) {
+      if (response.statusCode === 401) {
         await waitForNewToken(client).catch((err) => {})
         response = await client.getTracks(batch)
       }

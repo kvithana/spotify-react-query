@@ -17,7 +17,7 @@ export const fetchAlbums =
     while (remaining.length > 0) {
       const batch = remaining.splice(0, 50)
       let response = await spotify.getAlbums(batch)
-      if (response.statusCode === 429) {
+      if (response.statusCode === 401) {
         await waitForNewToken(spotify).catch((err) => {})
         response = await spotify.getAlbums(batch)
       }

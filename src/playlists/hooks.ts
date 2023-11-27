@@ -26,7 +26,7 @@ export function usePlaylist(
     await until(() => !!client.getAccessToken())
     let response = await client.getPlaylist(id)
 
-    if (response.statusCode === 429) {
+    if (response.statusCode === 401) {
       await waitForNewToken(client).catch((err) => {})
       response = await client.getPlaylist(id)
     }
@@ -77,7 +77,7 @@ export function usePlaylistTracks(
 
     let response = await get()
 
-    if (response.statusCode === 429) {
+    if (response.statusCode === 401) {
       await waitForNewToken(client).catch((err) => {})
       response = await get()
     }

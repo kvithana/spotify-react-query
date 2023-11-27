@@ -27,7 +27,7 @@ export function useUserTopTracks(
     await until(() => !!client.getAccessToken())
     let response = await client.getMyTopTracks(variables)
 
-    if (response.statusCode === 429) {
+    if (response.statusCode === 401) {
       await waitForNewToken(client).catch((err) => {})
       response = await client.getMyTopTracks(variables)
     }
@@ -71,7 +71,7 @@ export function useUserTopArtists(
     await until(() => !!client.getAccessToken())
     let response = await client.getMyTopArtists(variables)
 
-    if (response.statusCode === 429) {
+    if (response.statusCode === 401) {
       await waitForNewToken(client).catch((err) => {})
       response = await client.getMyTopArtists(variables)
     }
@@ -115,7 +115,7 @@ export function useRecentlyPlayedTracks(
     await until(() => !!client.getAccessToken())
     let response = await client.getMyRecentlyPlayedTracks(variables)
 
-    if (response.statusCode === 429) {
+    if (response.statusCode === 401) {
       await waitForNewToken(client).catch((err) => {})
       response = await client.getMyRecentlyPlayedTracks(variables)
     }
