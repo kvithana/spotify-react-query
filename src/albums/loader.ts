@@ -4,6 +4,7 @@ import SpotifyWebApi from "spotify-web-api-node"
 import { getError } from "../errors"
 import { addTracksToCache } from "../tracks/cache"
 import { until } from "../utils/until"
+import { waitForNewToken } from "../utils/wait-for-new-token"
 
 export const fetchAlbums =
   (spotify: SpotifyWebApi, query: QueryClient) =>
@@ -15,7 +16,11 @@ export const fetchAlbums =
 
     while (remaining.length > 0) {
       const batch = remaining.splice(0, 50)
-      const response = await spotify.getAlbums(batch)
+      let response = await spotify.getAlbums(batch)
+      if (response.statusCode === 429) {
+        await waitForNewToken(spotify).catch((err) => {})
+        response = await spotify.getAlbums(batch)
+      }
       if (response.statusCode !== 200) {
         throw getError(response.statusCode, response.body)
       }

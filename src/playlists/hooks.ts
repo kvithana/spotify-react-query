@@ -4,6 +4,7 @@ import { getError } from "../errors"
 import { config } from "../query-config"
 import { addTracksToCache } from "../tracks/cache"
 import { until } from "../utils/until"
+import { waitForNewToken } from "../utils/wait-for-new-token"
 
 /**
  * Get a playlist owned by a Spotify user.
@@ -19,15 +20,29 @@ export function usePlaylist(
   >
 ) {
   const client = useSpotifyClient()
+  const query = useQueryClient()
 
   const loader = async (id: string) => {
     await until(() => !!client.getAccessToken())
-    return client.getPlaylist(id).then((res) => {
-      if (res.statusCode !== 200) {
-        throw getError(res.statusCode, res.body)
-      }
-      return res.body
-    })
+    let response = await client.getPlaylist(id)
+
+    if (response.statusCode === 429) {
+      await waitForNewToken(client).catch((err) => {})
+      response = await client.getPlaylist(id)
+    }
+
+    if (response.statusCode !== 200) {
+      throw getError(response.statusCode, response.body)
+    }
+
+    if (response.body.tracks.items) {
+      addTracksToCache(
+        query,
+        response.body.tracks.items.filter((i) => !!i.track?.uri).map((i) => i.track!)
+      )
+    }
+
+    return response.body
   }
 
   return useQuery(["playlist", id], () => loader(id), config(options))
@@ -52,25 +67,31 @@ export function usePlaylistTracks(
 
   const loader = async () => {
     await until(() => !!client.getAccessToken())
-    return client
-      .getPlaylistTracks(variables.id, {
+    const get = () =>
+      client.getPlaylistTracks(variables.id, {
         fields: variables.fields,
         limit: variables.limit,
         offset: variables.offset,
         market: variables.market,
       })
-      .then((res) => {
-        if (res.statusCode !== 200) {
-          throw getError(res.statusCode, res.body)
-        }
-        if (res.body.items) {
-          addTracksToCache(
-            query,
-            res.body.items.filter((i) => !!i.track?.uri).map((i) => i.track!)
-          )
-        }
-        return res.body
-      })
+
+    let response = await get()
+
+    if (response.statusCode === 429) {
+      await waitForNewToken(client).catch((err) => {})
+      response = await get()
+    }
+
+    if (response.statusCode !== 200) {
+      throw getError(response.statusCode, response.body)
+    }
+    if (response.body.items) {
+      addTracksToCache(
+        query,
+        response.body.items.filter((i) => !!i.track?.uri).map((i) => i.track!)
+      )
+    }
+    return response.body
   }
 
   return useQuery(

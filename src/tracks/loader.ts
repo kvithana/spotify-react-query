@@ -2,6 +2,7 @@ import DataLoader from "dataloader"
 import SpotifyWebApi from "spotify-web-api-node"
 import { getError } from "../errors"
 import { until } from "../utils/until"
+import { waitForNewToken } from "../utils/wait-for-new-token"
 
 export const fetchTracks =
   (client: SpotifyWebApi) =>
@@ -13,7 +14,11 @@ export const fetchTracks =
 
     while (remaining.length > 0) {
       const batch = remaining.splice(0, 50)
-      const response = await client.getTracks(batch)
+      let response = await client.getTracks(batch)
+      if (response.statusCode === 429) {
+        await waitForNewToken(client).catch((err) => {})
+        response = await client.getTracks(batch)
+      }
       if (response.statusCode !== 200) {
         throw getError(response.statusCode, response.body)
       }

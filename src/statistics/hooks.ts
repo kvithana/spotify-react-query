@@ -5,6 +5,7 @@ import { getError } from "../errors"
 import { config } from "../query-config"
 import { addTracksToCache } from "../tracks/cache"
 import { until } from "../utils/until"
+import { waitForNewToken } from "../utils/wait-for-new-token"
 
 /**
  * Get the current user's top tracks based on calculated affinity.
@@ -24,18 +25,23 @@ export function useUserTopTracks(
 
   const loader = async () => {
     await until(() => !!client.getAccessToken())
-    return client.getMyTopTracks(variables).then((res) => {
-      if (res.statusCode !== 200) {
-        throw getError(res.statusCode, res.body)
-      }
-      if (res.body.items) {
-        addTracksToCache(
-          query,
-          res.body.items.filter((i) => !!i?.uri).map((i) => i!)
-        )
-      }
-      return res.body
-    })
+    let response = await client.getMyTopTracks(variables)
+
+    if (response.statusCode === 429) {
+      await waitForNewToken(client).catch((err) => {})
+      response = await client.getMyTopTracks(variables)
+    }
+
+    if (response.statusCode !== 200) {
+      throw getError(response.statusCode, response.body)
+    }
+    if (response.body.items) {
+      addTracksToCache(
+        query,
+        response.body.items.filter((i) => !!i?.uri).map((i) => i!)
+      )
+    }
+    return response.body
   }
 
   return useQuery(
@@ -63,18 +69,23 @@ export function useUserTopArtists(
 
   const loader = async () => {
     await until(() => !!client.getAccessToken())
-    return client.getMyTopArtists(variables).then((res) => {
-      if (res.statusCode !== 200) {
-        throw getError(res.statusCode, res.body)
-      }
-      if (res.body.items) {
-        addArtistsToCache(
-          query,
-          res.body.items.filter((i) => !!i?.uri).map((i) => i!)
-        )
-      }
-      return res.body
-    })
+    let response = await client.getMyTopArtists(variables)
+
+    if (response.statusCode === 429) {
+      await waitForNewToken(client).catch((err) => {})
+      response = await client.getMyTopArtists(variables)
+    }
+
+    if (response.statusCode !== 200) {
+      throw getError(response.statusCode, response.body)
+    }
+    if (response.body.items) {
+      addArtistsToCache(
+        query,
+        response.body.items.filter((i) => !!i?.uri).map((i) => i!)
+      )
+    }
+    return response.body
   }
 
   return useQuery(
@@ -102,18 +113,22 @@ export function useRecentlyPlayedTracks(
 
   const loader = async () => {
     await until(() => !!client.getAccessToken())
-    return client.getMyRecentlyPlayedTracks(variables).then((res) => {
-      if (res.statusCode !== 200) {
-        throw getError(res.statusCode, res.body)
-      }
-      if (res.body.items) {
-        addTracksToCache(
-          query,
-          res.body.items.filter((i) => !!i?.track.uri).map((i) => i.track!)
-        )
-      }
-      return res.body
-    })
+    let response = await client.getMyRecentlyPlayedTracks(variables)
+
+    if (response.statusCode === 429) {
+      await waitForNewToken(client).catch((err) => {})
+      response = await client.getMyRecentlyPlayedTracks(variables)
+    }
+    if (response.statusCode !== 200) {
+      throw getError(response.statusCode, response.body)
+    }
+    if (response.body.items) {
+      addTracksToCache(
+        query,
+        response.body.items.filter((i) => !!i?.track.uri).map((i) => i.track!)
+      )
+    }
+    return response.body
   }
 
   return useQuery(

@@ -2,6 +2,7 @@ import DataLoader from "dataloader"
 import SpotifyWebApi from "spotify-web-api-node"
 import { getError } from "../errors"
 import { until } from "../utils/until"
+import { waitForNewToken } from "../utils/wait-for-new-token"
 
 export const fetchArtists =
   (spotify: SpotifyWebApi) =>
@@ -10,10 +11,14 @@ export const fetchArtists =
     const artists: SpotifyApi.ArtistObjectFull[] = []
 
     await until(() => !!spotify.getAccessToken())
-  
+
     while (remaining.length > 0) {
       const batch = remaining.splice(0, 50)
-      const response = await spotify.getArtists(batch)
+      let response = await spotify.getArtists(batch)
+      if (response.statusCode === 429) {
+        await waitForNewToken(spotify).catch((err) => {})
+        response = await spotify.getArtists(batch)
+      }
       if (response.statusCode !== 200) {
         throw getError(response.statusCode, response.body)
       }
