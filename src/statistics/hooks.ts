@@ -38,7 +38,7 @@ export function useUserTopTracks(
     if (response.body.items) {
       addTracksToCache(
         query,
-        response.body.items.filter((i) => !!i?.uri).map((i) => i!)
+        response.body.items.filter((i) => !!i?.uri).map((i) => i)
       )
     }
     return response.body
@@ -82,7 +82,7 @@ export function useUserTopArtists(
     if (response.body.items) {
       addArtistsToCache(
         query,
-        response.body.items.filter((i) => !!i?.uri).map((i) => i!)
+        response.body.items.filter((i) => !!i?.uri).map((i) => i)
       )
     }
     return response.body
@@ -125,7 +125,7 @@ export function useRecentlyPlayedTracks(
     if (response.body.items) {
       addTracksToCache(
         query,
-        response.body.items.filter((i) => !!i?.track.uri).map((i) => i.track!)
+        response.body.items.filter((i) => !!i?.track.uri).map((i) => i.track)
       )
     }
     return response.body

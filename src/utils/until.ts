@@ -13,22 +13,22 @@ export const until = async (
   if (fn()) {
     return Promise.resolve(true)
   } else {
-    const p1 = new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      let success = false
       const timer = setInterval(() => {
         if (fn()) {
+          success = true
           clearInterval(timer)
           resolve(true)
         }
       }, options?.interval ?? 100)
-    })
-    let p2: Promise<never> | undefined
-    if (options?.timeout) {
-      p2 = new Promise((_, reject) => {
-        setTimeout(() => {
+
+      setTimeout(() => {
+        if (!success) {
+          clearInterval(timer)
           reject(new Error("Wait until timed out"))
-        }, options.timeout)
-      })
-    }
-    await Promise.race([p1, p2])
+        }
+      }, options?.timeout ?? 10000)
+    })
   }
 }
