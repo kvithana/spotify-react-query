@@ -1,14 +1,14 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query"
+import { useQuery, type UseQueryOptions } from "@tanstack/react-query"
 import { useLoaders } from "../client"
 import { config } from "../query-config"
 
 /**
  * Returns a query for a simplified album object from the Spotify API. This will
- * leverage the cache better that `useFullAlbum` if used in combination with
+ * leverage the cache better than `useFullAlbum` if used in combination with
  * fetching Playlists, Artists etc which fetches simplified album data already.
  *
  * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-album
- * @param id Spotify album URI
+ * @param id Spotify album ID
  */
 export function useSimplifiedAlbum(
   id: string,
@@ -18,14 +18,18 @@ export function useSimplifiedAlbum(
   >
 ) {
   const { album } = useLoaders()
-  return useQuery(["album", "simplified", id], () => album.load(id), config(options))
+  return useQuery({
+    queryKey: ["album", "simplified", id],
+    queryFn: () => album.load(id),
+    ...config(options),
+  })
 }
 
 /**
  * Returns a query for a full album object from the Spotify API.
  *
  * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-album
- * @param id Spotify album URI
+ * @param id Spotify album ID
  */
 export function useFullAlbum(
   id: string,
@@ -35,5 +39,9 @@ export function useFullAlbum(
   >
 ) {
   const { album } = useLoaders()
-  return useQuery(["album", "full", id], () => album.load(id), config(options))
+  return useQuery({
+    queryKey: ["album", "full", id],
+    queryFn: () => album.load(id),
+    ...config(options),
+  })
 }

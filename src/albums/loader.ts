@@ -1,13 +1,13 @@
-import { QueryClient } from "@tanstack/react-query"
+import { type QueryClient } from "@tanstack/react-query"
 import DataLoader from "dataloader"
-import SpotifyWebApi from "spotify-web-api-node"
 import { getError } from "../errors"
 import { addTracksToCache } from "../tracks/cache"
+import type { SpotifyClient } from "../types"
 import { until } from "../utils/until"
 import { waitForNewToken } from "../utils/wait-for-new-token"
 
 export const fetchAlbums =
-  (spotify: SpotifyWebApi, query: QueryClient) =>
+  (spotify: SpotifyClient, query: QueryClient) =>
   async (keys: readonly string[]): Promise<SpotifyApi.AlbumObjectFull[]> => {
     const remaining = [...keys]
     const albums: SpotifyApi.AlbumObjectFull[] = []
@@ -18,7 +18,7 @@ export const fetchAlbums =
       const batch = remaining.splice(0, 50)
       let response = await spotify.getAlbums(batch)
       if (response.statusCode === 401) {
-        await waitForNewToken(spotify).catch((err) => {})
+        await waitForNewToken(spotify).catch(() => {})
         response = await spotify.getAlbums(batch)
       }
       if (response.statusCode !== 200) {
@@ -33,7 +33,7 @@ export const fetchAlbums =
     return albums
   }
 
-export const createAlbumLoader = (spotify: SpotifyWebApi, query: QueryClient) =>
+export const createAlbumLoader = (spotify: SpotifyClient, query: QueryClient) =>
   new DataLoader<string, SpotifyApi.AlbumObjectFull>(fetchAlbums(spotify, query), { cache: false })
 
 export type AlbumLoader = ReturnType<typeof createAlbumLoader>

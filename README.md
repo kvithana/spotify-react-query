@@ -6,34 +6,50 @@
 [![Latest][latest-img]](https://www.npmjs.com/package/spotify-react-query)
 [![Size][size-img]](https://bundlephobia.com/result?p=spotify-react-query)
 
-Simple React Query hooks for the Spotify Web API. With the power of [React Query](https://tanstack.com/query/v4/docs/quick-start), requests for Spotify resources are automatically cached, and by leveraging [dataloader](https://github.com/graphql/dataloader) under the hood, we can batch calls for similar resources to avoid using up your Spotify API quota.
+Lightweight React Query hooks for the Spotify Web API. Built on [TanStack Query v5](https://tanstack.com/query/v5/docs/framework/react/overview), requests for Spotify resources are automatically cached and deduped. Under the hood, [dataloader](https://github.com/graphql/dataloader) batches related requests to keep API quota usage low.
 
-This package is used by the musictaste.space beta.
+Used in production by [musictaste.space](https://musictaste.space).
+
+## Requirements
+
+- React `>= 18`
+- `@tanstack/react-query` `^5`
+- Node `>= 18` (or any modern browser/edge runtime — uses native `fetch`)
 
 ## Install
 
-Install this package by running the following command in your project:
-
-```
-yarn add spotify-react-query
+```bash
+npm install spotify-react-query @tanstack/react-query
+# or
+pnpm add spotify-react-query @tanstack/react-query
+# or
+yarn add spotify-react-query @tanstack/react-query
 ```
 
 ## Usage
 
-In order to use the hooks, you must wrap dependent components in a `SpotifyQueryProvider` and pass in a [React Query](https://tanstack.com/query/v4/docs/quick-start) `QueryClient`. The client can be customized to suit your use case, or you can pass in the default client and it will work out of the box.
+To use the hooks, wrap dependent components in a `SpotifyQueryProvider` and pass in:
 
-You must also provide a Spotify Client instance from `spotify-web-api-node`. The library will not perform any requests until an access token is set on the client. You will need to manage the lifecycle of token refreshes outside of `<SpotifyQueryProvider>` context.
+1. A [React Query](https://tanstack.com/query/v4/docs/quick-start) `QueryClient`.
+2. A Spotify client that satisfies the `SpotifyClient` interface exported from this package.
 
-### SpotifyQueryProvider
+`spotify-react-query` ships a tiny dependency-free `createSpotifyClient` built on the native `fetch` API — recommended for browser, edge, and modern Node runtimes. You can also bring your own implementation (e.g. `spotify-web-api-node`); any object whose method shapes match `SpotifyClient` is accepted.
+
+The library will not issue requests until `getAccessToken()` returns a value, so you can safely mount the provider before your token resolves. Token refreshes are managed by your application outside the provider.
+
+### SpotifyQueryProvider (recommended: built-in fetch client)
 
 ```typescript
 import { QueryClient } from "@tanstack/react-query"
-import SpotifyClient from "spotify-web-api-node"
+import { SpotifyQueryProvider, createSpotifyClient } from "spotify-react-query"
 
 const query = new QueryClient()
-const spotify = new SpotifyClient()
-// this is usually managed inside your application
-spotify.setAccessToken("<ACCESS_TOKEN>")
+
+// Bring your own access-token state (Redux, Zustand, context, etc.).
+let accessToken: string | undefined
+const spotify = createSpotifyClient({
+  getAccessToken: () => accessToken,
+})
 
 const App = () => {
   return (
@@ -44,25 +60,39 @@ const App = () => {
 }
 ```
 
-### Quickstart Example
+### Using `spotify-web-api-node` instead
+
+If you already use `spotify-web-api-node`, pass it directly — it satisfies the `SpotifyClient` interface structurally:
 
 ```typescript
+import SpotifyWebApi from "spotify-web-api-node"
+import { SpotifyQueryProvider } from "spotify-react-query"
+
+const spotify = new SpotifyWebApi()
+spotify.setAccessToken("<ACCESS_TOKEN>")
+
+<SpotifyQueryProvider query={query} spotify={spotify}>{/* ... */}</SpotifyQueryProvider>
+```
+
+> **Migrating from `<= 0.12.x`:**
+>
+> - `spotify-web-api-node` is no longer a peer dependency. Switch to `createSpotifyClient` (built-in, native `fetch`) to drop it and its Node-only transitive deps from your bundle. If you specifically need its full SDK, install it explicitly.
+> - This release targets `@tanstack/react-query` v5. Upgrade your app following the [TanStack v5 migration guide](https://tanstack.com/query/v5/docs/framework/react/guides/migrating-to-v5) — most notably, `useQuery(["key"], fn, opts)` is no longer accepted; use `useQuery({ queryKey, queryFn, ... })`. The hooks exported by this package already use the v5 form, so no consumer code change is required.
+
+### Quickstart Example
+
+```tsx
 import { useSimplifiedTrack } from "spotify-react-query"
 
-function TrackComponent({ uri }: { uri: string }) {
-  const { data: track, isLoading } = useSimplifiedTrack(uri)
+function TrackComponent({ id }: { id: string }) {
+  const { data: track, isLoading } = useSimplifiedTrack(id)
 
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
-
-  if (!track) {
-    return null
-  }
+  if (isLoading) return <div>Loading...</div>
+  if (!track) return null
 
   return (
     <div>
-      {track.name} by ${track.artists[0].name}
+      {track.name} by {track.artists[0].name}
     </div>
   )
 }
@@ -154,12 +184,31 @@ function useRecentlyPlayedTracks(
 
 ### Spotify Client
 
-You can also use the Spotify client directly to leverage all the methods available via `spotify-web-api-node`
+You can access the underlying Spotify client from any component inside the provider:
 
 ```typescript
 import { useSpotifyClient } from "spotify-react-query"
 
 const client = useSpotifyClient()
 
-client.getMe().then((res) => console.log(res.body))
+client.getTracks(["3n3Ppam7vgaVa1iaRUc9Lp"]).then((res) => console.log(res.body))
+```
+
+The returned client is whatever you passed to `<SpotifyQueryProvider />`, narrowed to the `SpotifyClient` interface. If you provided a `spotify-web-api-node` instance, all of its extra methods are still available at runtime — you can cast back to its type to access them.
+
+### Bring your own client
+
+`SpotifyClient` is a structural interface. If you need a custom transport (e.g. a backend proxy that adds your own auth), implement only the methods you use:
+
+```typescript
+import type { SpotifyClient } from "spotify-react-query"
+
+const customClient: SpotifyClient = {
+  getAccessToken: () => myAuth.token,
+  getTracks: async (ids) => {
+    const res = await fetch(`/api/spotify/tracks?ids=${ids.join(",")}`)
+    return { statusCode: res.status, body: await res.json() }
+  },
+  // ...other methods
+}
 ```

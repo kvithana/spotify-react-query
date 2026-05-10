@@ -5,26 +5,55 @@ import typescript from "@rollup/plugin-typescript"
 import dts from "rollup-plugin-dts"
 import peerDepsExternal from "rollup-plugin-peer-deps-external"
 
-export default [
+const sharedPlugins = [peerDepsExternal(), resolve(), json(), commonjs()]
+
+const config = [
+  // ESM bundle + per-file declarations (consumed by the dts step below).
   {
     input: "src/index.ts",
-    output: [
-      {
-        file: "dist/cjs/index.js",
-        format: "cjs",
-        sourcemap: true,
-      },
-      {
-        file: "dist/esm/index.js",
-        format: "esm",
-        sourcemap: true,
-      },
+    output: {
+      file: "dist/esm/index.js",
+      format: "esm",
+      sourcemap: true,
+    },
+    plugins: [
+      ...sharedPlugins,
+      typescript({
+        tsconfig: "./tsconfig.json",
+        declaration: true,
+        declarationDir: "dist/esm",
+        sourceMap: true,
+        outDir: "dist/esm",
+      }),
     ],
-    plugins: [resolve(), peerDepsExternal(), json(), commonjs(), typescript({ tsconfig: "./tsconfig.json" })],
   },
+  // CJS bundle. No declarations needed — the dts plugin produces a single
+  // `dist/index.d.ts` that both formats reference via the `exports` map.
   {
-    input: "dist/esm/src/index.d.ts",
-    output: [{ file: "dist/index.d.ts", format: "esm" }],
+    input: "src/index.ts",
+    output: {
+      file: "dist/cjs/index.cjs",
+      format: "cjs",
+      sourcemap: true,
+      exports: "named",
+    },
+    plugins: [
+      ...sharedPlugins,
+      typescript({
+        tsconfig: "./tsconfig.json",
+        declaration: false,
+        declarationMap: false,
+        sourceMap: true,
+        outDir: "dist/cjs",
+      }),
+    ],
+  },
+  // Roll all per-file `.d.ts` files into a single bundled declaration file.
+  {
+    input: "dist/esm/index.d.ts",
+    output: { file: "dist/index.d.ts", format: "esm" },
     plugins: [dts()],
   },
-] as any
+]
+
+export default config

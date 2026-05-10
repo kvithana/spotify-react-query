@@ -1,7 +1,7 @@
-import SpotifyWebApi from "spotify-web-api-node"
+import type { SpotifyClient } from "../types"
 import { until } from "./until"
 
-export async function waitForNewToken(client: SpotifyWebApi) {
+export async function waitForNewToken(client: SpotifyClient) {
   const current = client.getAccessToken()
   // wait for up to 10 seconds for a new token to be fetched, otherwise continue
   await until(() => client.getAccessToken() !== current, {

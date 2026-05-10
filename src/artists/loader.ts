@@ -1,11 +1,11 @@
 import DataLoader from "dataloader"
-import SpotifyWebApi from "spotify-web-api-node"
 import { getError } from "../errors"
+import type { SpotifyClient } from "../types"
 import { until } from "../utils/until"
 import { waitForNewToken } from "../utils/wait-for-new-token"
 
 export const fetchArtists =
-  (spotify: SpotifyWebApi) =>
+  (spotify: SpotifyClient) =>
   async (keys: readonly string[]): Promise<SpotifyApi.ArtistObjectFull[]> => {
     const remaining = [...keys]
     const artists: SpotifyApi.ArtistObjectFull[] = []
@@ -16,7 +16,7 @@ export const fetchArtists =
       const batch = remaining.splice(0, 50)
       let response = await spotify.getArtists(batch)
       if (response.statusCode === 401) {
-        await waitForNewToken(spotify).catch((err) => {})
+        await waitForNewToken(spotify).catch(() => {})
         response = await spotify.getArtists(batch)
       }
       if (response.statusCode !== 200) {
@@ -28,7 +28,7 @@ export const fetchArtists =
     return artists
   }
 
-export const createArtistLoader = (client: SpotifyWebApi) =>
+export const createArtistLoader = (client: SpotifyClient) =>
   new DataLoader<string, SpotifyApi.ArtistObjectFull>(fetchArtists(client), { cache: false })
 
 export type ArtistLoader = ReturnType<typeof createArtistLoader>

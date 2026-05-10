@@ -1,4 +1,4 @@
-import { QueryClient } from "@tanstack/react-query"
+import { type QueryClient } from "@tanstack/react-query"
 
 export function addTracksToCache(client: QueryClient, tracks: SpotifyApi.TrackObjectSimplified[] | SpotifyApi.TrackObjectFull[]) {
   for (const track of tracks) {

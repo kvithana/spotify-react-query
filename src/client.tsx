@@ -1,12 +1,12 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { type QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import React, { createContext, useMemo } from "react"
-import type SpotifyWebApi from "spotify-web-api-node"
-import { AlbumLoader, createAlbumLoader } from "./albums/loader"
-import { ArtistLoader, createArtistLoader } from "./artists/loader"
-import { createTrackLoader, TrackLoader } from "./tracks/loader"
+import { type AlbumLoader, createAlbumLoader } from "./albums/loader"
+import { type ArtistLoader, createArtistLoader } from "./artists/loader"
+import { createTrackLoader, type TrackLoader } from "./tracks/loader"
+import type { SpotifyClient } from "./types"
 
 export type SpotifyQueryContextType = {
-  client: SpotifyWebApi
+  client: SpotifyClient
   loaders: {
     track: TrackLoader
     album: AlbumLoader
@@ -22,23 +22,25 @@ export function SpotifyQueryProvider({
   children,
 }: {
   query: QueryClient
-  spotify: SpotifyWebApi
+  spotify: SpotifyClient
   children: React.ReactNode
 }) {
-  const loaders = useMemo(() => {
-    return {
+  const loaders = useMemo(
+    () => ({
       track: createTrackLoader(spotify),
       album: createAlbumLoader(spotify, query),
       artist: createArtistLoader(spotify),
-    }
-  }, [])
+    }),
+    [spotify, query],
+  )
 
-  const value = useMemo(() => {
-    return {
+  const value = useMemo(
+    () => ({
       client: spotify,
       loaders,
-    }
-  }, [loaders])
+    }),
+    [spotify, loaders],
+  )
 
   return (
     <SpotifyQueryContext.Provider value={value}>

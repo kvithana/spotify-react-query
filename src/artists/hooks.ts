@@ -1,4 +1,4 @@
-import { useQueries, useQuery, UseQueryOptions } from "@tanstack/react-query"
+import { useQueries, useQuery, type UseQueryOptions } from "@tanstack/react-query"
 import { useLoaders } from "../client"
 import { config } from "../query-config"
 
@@ -6,7 +6,7 @@ import { config } from "../query-config"
  * Returns a query for a simplified artist object from the Spotify API.
  *
  * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artist
- * @param id Spotify artist URI
+ * @param id Spotify artist ID
  */
 export function useSimplifiedArtist(
   id: string,
@@ -16,14 +16,18 @@ export function useSimplifiedArtist(
   >
 ) {
   const { artist } = useLoaders()
-  return useQuery(["artist", "simplified", id], () => artist.load(id), config(options))
+  return useQuery({
+    queryKey: ["artist", "simplified", id],
+    queryFn: () => artist.load(id),
+    ...config(options),
+  })
 }
 
 /**
  * Returns a query for a full artist object from the Spotify API.
  *
  * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artist
- * @param id Spotify artist URI
+ * @param id Spotify artist ID
  */
 export function useFullArtist(
   id: string,
@@ -33,14 +37,18 @@ export function useFullArtist(
   >
 ) {
   const { artist } = useLoaders()
-  return useQuery(["artist", "full", id], () => artist.load(id), config(options))
+  return useQuery({
+    queryKey: ["artist", "full", id],
+    queryFn: () => artist.load(id),
+    ...config(options),
+  })
 }
 
 /**
- * Returns a query for multiple full artist objects from the Spotify API.
+ * Returns parallel queries for multiple full artist objects from the Spotify API.
  *
  * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artist
- * @param id Spotify artist URI
+ * @param ids Spotify artist IDs
  */
 export function useFullArtists(
   ids: string[],
@@ -54,7 +62,7 @@ export function useFullArtists(
     queries: ids.map((id) => ({
       queryKey: ["artist", "full", id],
       queryFn: () => artist.load(id),
-      config: config(options),
+      ...config(options),
     })),
   })
 }

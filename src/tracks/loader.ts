@@ -1,11 +1,11 @@
 import DataLoader from "dataloader"
-import SpotifyWebApi from "spotify-web-api-node"
 import { getError } from "../errors"
+import type { SpotifyClient } from "../types"
 import { until } from "../utils/until"
 import { waitForNewToken } from "../utils/wait-for-new-token"
 
 export const fetchTracks =
-  (client: SpotifyWebApi) =>
+  (client: SpotifyClient) =>
   async (keys: readonly string[]): Promise<SpotifyApi.TrackObjectFull[]> => {
     const remaining = [...keys]
     const tracks: SpotifyApi.TrackObjectFull[] = []
@@ -16,7 +16,7 @@ export const fetchTracks =
       const batch = remaining.splice(0, 50)
       let response = await client.getTracks(batch)
       if (response.statusCode === 401) {
-        await waitForNewToken(client).catch((err) => {})
+        await waitForNewToken(client).catch(() => {})
         response = await client.getTracks(batch)
       }
       if (response.statusCode !== 200) {
@@ -28,7 +28,7 @@ export const fetchTracks =
     return tracks
   }
 
-export const createTrackLoader = (client: SpotifyWebApi) =>
+export const createTrackLoader = (client: SpotifyClient) =>
   new DataLoader<string, SpotifyApi.TrackObjectFull>(fetchTracks(client), { cache: false })
 
 export type TrackLoader = ReturnType<typeof createTrackLoader>
